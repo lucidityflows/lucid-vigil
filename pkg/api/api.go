@@ -6,7 +6,9 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// StartAPIServer starts a simple HTTP server for health checks and metrics.
+// StartAPIServer initializes and starts a simple HTTP server in a goroutine.
+// It provides endpoints for health checks (/healthz) and Prometheus metrics (/metrics).
+// The server will run until the application is terminated.
 func StartAPIServer(port string) {
 	http.HandleFunc("/healthz", healthzHandler)
 	http.HandleFunc("/metrics", metricsHandler) // Placeholder for actual metrics

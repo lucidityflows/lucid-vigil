@@ -15,12 +15,13 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/kali-security-monitoring/sentinel/pkg/monitors/base"
-	"github.com/kali-security-monitoring/sentinel/pkg/scheduler"
+	"github.com/lucid-vigil/sentinel/pkg/monitors/base"
+	"github.com/lucid-vigil/sentinel/pkg/scheduler"
 	"github.com/rs/zerolog"
 )
 
 // FilesystemMonitorConfig holds configuration for the FilesystemMonitor.
+// It defines paths to watch, paths to exclude, and settings for various checks.
 type FilesystemMonitorConfig struct {
 	CriticalPaths      string `mapstructure:"critical_paths"`
 	ExcludePaths       string `mapstructure:"exclude_paths"`
@@ -31,13 +32,15 @@ type FilesystemMonitorConfig struct {
 	ConfigBaselineDir  string `mapstructure:"config_baseline_dir"`
 }
 
-// FilesystemMonitor implements the scheduler.Monitor interface for filesystem integrity monitoring.
+// FilesystemMonitor implements the scheduler.Monitor interface. It is responsible for
+// monitoring filesystem events in real-time (using fsnotify) and running periodic
+// checks for things like SUID/SGID binaries and critical file integrity.
 type FilesystemMonitor struct {
 	*base.BaseMonitor
 	config *FilesystemMonitorConfig
 }
 
-// NewFilesystemMonitor creates a new FilesystemMonitor.
+// NewFilesystemMonitor creates a new FilesystemMonitor instance.
 func NewFilesystemMonitor(logger zerolog.Logger) scheduler.Monitor {
 	return &FilesystemMonitor{
 		BaseMonitor: base.NewBaseMonitor("filesystem_monitor", logger),
@@ -45,7 +48,8 @@ func NewFilesystemMonitor(logger zerolog.Logger) scheduler.Monitor {
 	}
 }
 
-// Run executes the filesystem monitoring logic.
+// Run is the main entry point for the monitor. It sets up the filesystem watcher
+// and starts a ticker for periodic checks.
 func (fm *FilesystemMonitor) Run(ctx context.Context) {
 	fm.LogEvent(zerolog.InfoLevel, "Running Filesystem Monitor...")
 
@@ -76,7 +80,7 @@ func (fm *FilesystemMonitor) Run(ctx context.Context) {
 					return
 				}
 				fm.handleFilesystemEvent(event)
-			case err, ok := <-watcher.Errors:
+			case _, ok := <-watcher.Errors:
 				if !ok {
 					return
 				}
@@ -130,7 +134,8 @@ func (fm *FilesystemMonitor) handleFilesystemEvent(event fsnotify.Event) {
 		}
 	}
 
-	fm.LogEvent(zerolog.InfoLevel).Str("event", event.Op.String()).Str("file", event.Name).Msg("Filesystem event detected.")
+	//fm.LogEvent(zerolog.InfoLevel).Str("event", event.Op.String()).Str("file", event.Name).Msg("Filesystem event detected.")
+	fm.LogEvent(zerolog.InfoLevel, event.Op.String()).Str("file", event.Name).Msg("Filesystem event detected.")
 
 	switch {
 	case event.Op&fsnotify.Create == fsnotify.Create:
@@ -208,7 +213,7 @@ func (fm *FilesystemMonitor) checkPermissionChange(filePath string) {
 
 	// Check for world-writable files
 	perm := info.Mode().Perm()
-	if (perm&0002) != 0 {
+	if (perm & 0002) != 0 {
 		fm.LogEvent(zerolog.WarnLevel, "World-writable file detected.").Str("file_path", filePath).Str("permissions", perm.String())
 	}
 
@@ -284,7 +289,7 @@ func (fm *FilesystemMonitor) monitorSuidFiles() {
 func difference(a, b []string) []string {
 	mb := make(map[string]struct{}, len(b))
 	for _, x := range b {
-		mb[x] = struct{}{}?
+		mb[x] = struct{}{}
 	}
 	var diff []string
 	for _, x := range a {
@@ -431,7 +436,7 @@ func (fm *FilesystemMonitor) monitorDiskUsage() {
 		return
 	}
 
-	inodeUsagePercent := float64(inodeStat.Files - inodeStat.Ffree) / float64(inodeStat.Files) * 100
+	inodeUsagePercent := float64(inodeStat.Files-inodeStat.Ffree) / float64(inodeStat.Files) * 100
 	fm.LogEvent(zerolog.InfoLevel, "Inode usage monitored.").Float64("inode_usage_percent", inodeUsagePercent)
 
 	if inodeUsagePercent > 90 {
