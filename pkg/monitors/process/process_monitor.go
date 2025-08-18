@@ -3,18 +3,18 @@ package process
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
-	
 
 	"github.com/rs/zerolog/log"
 	"github.com/shirou/gopsutil/v3/process"
 )
 
 // ProcessMonitorConfig holds configuration for the ProcessMonitor.
+// It defines thresholds for resource usage and lists of suspicious process names.
 type ProcessMonitorConfig struct {
 	CPUThreshold    float64 `mapstructure:"cpu_threshold"`
 	MemoryThreshold float64 `mapstructure:"memory_threshold"`
@@ -23,18 +23,21 @@ type ProcessMonitorConfig struct {
 	WhitelistUsers  string  `mapstructure:"whitelist_users"`
 }
 
-// ProcessMonitor implements the scheduler.Monitor interface for process monitoring.
+// ProcessMonitor implements the scheduler.Monitor interface. It is responsible for
+// monitoring running processes for high resource consumption, suspicious names,
+// and other anomalies like hidden processes or unusual parent-child relationships.
 type ProcessMonitor struct {
-	Config          ProcessMonitorConfig
+	Config            ProcessMonitorConfig
 	previousProcesses map[int32]bool
 }
 
-// Name returns the name of the monitor.
+// Name returns the unique name of the monitor.
 func (pm *ProcessMonitor) Name() string {
 	return "process_monitor"
 }
 
-// Run executes the process monitoring logic.
+// Run is the main entry point for the monitor's execution loop. It calls
+// various sub-functions to perform specific checks.
 func (pm *ProcessMonitor) Run(ctx context.Context) {
 	log.Info().Msg("Running Process Monitor...")
 
@@ -182,7 +185,7 @@ func (pm *ProcessMonitor) monitorProcessCreation() {
 
 // detectHiddenProcesses detects processes that are in /proc but not shown by ps (gopsutil).
 func (pm *ProcessMonitor) detectHiddenProcesses() {
-	procDirs, err := ioutil.ReadDir("/proc")
+	procDirs, err := os.ReadDir("/proc")
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to read /proc directory for hidden process detection.")
 		return
@@ -214,7 +217,7 @@ func (pm *ProcessMonitor) detectHiddenProcesses() {
 			hiddenCount++
 			// Try to get command name from /proc/<pid>/comm
 			commPath := fmt.Sprintf("/proc/%d/comm", pid)
-			comm, readErr := ioutil.ReadFile(commPath)
+			comm, readErr := os.ReadFile(commPath)
 			commStr := "unknown"
 			if readErr == nil {
 				commStr = strings.TrimSpace(string(comm))

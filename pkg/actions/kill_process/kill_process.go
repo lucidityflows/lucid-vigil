@@ -5,20 +5,25 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"syscall"
 
 	"github.com/rs/zerolog/log"
 )
 
-// KillProcessAction implements the actions.Action interface for terminating a process.
+// Implments Action interface
+
+// KillProcessAction implements the actions.Action interface. It is responsible for
+// terminating a process given its Process ID (PID).
 type KillProcessAction struct{}
 
-// Name returns the name of the action.
+// Name returns the unique name of the action.
 func (kpa *KillProcessAction) Name() string {
 	return "kill_process"
 }
 
-// Execute attempts to kill a process given its PID.
-// The `data` map is expected to contain a "pid" key with the process ID as an int or string.
+// Execute runs the logic to kill a process. It expects the data map to contain
+// a "pid" key with the integer PID. It first attempts a graceful termination with
+// SIGTERM, followed by a forceful SIGKILL if the first signal fails.
 func (kpa *KillProcessAction) Execute(ctx context.Context, data map[string]interface{}) error {
 	pidVal, ok := data["pid"]
 	if !ok {

@@ -4,21 +4,25 @@ import (
 	"context"
 	"fmt"
 	"net"
-	os/exec"
+	"os/exec"
 
 	"github.com/rs/zerolog/log"
 )
 
-// BlockIPAction implements the actions.Action interface for blocking an IP address.
+// Implements Action interface
+
+// BlockIPAction implements the actions.Action interface. It is responsible for
+// blocking a given IP address using the system's firewall (iptables).
 type BlockIPAction struct{}
 
-// Name returns the name of the action.
+// Name returns the unique name of the action.
 func (bia *BlockIPAction) Name() string {
 	return "block_ip"
 }
 
-// Execute attempts to block an IP address using iptables.
-// The `data` map is expected to contain an "ip" key with the IP address as a string.
+// Execute runs the logic to block an IP address. It expects the data map to
+// contain an "ip" key with the IP address string to be blocked. It uses `sudo iptables`
+// to add a DROP rule to the INPUT chain.
 func (bia *BlockIPAction) Execute(ctx context.Context, data map[string]interface{}) error {
 	ip, ok := data["ip"].(string)
 	if !ok || ip == "" {
