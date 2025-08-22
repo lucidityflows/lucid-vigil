@@ -7,9 +7,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/lucid-vigil/sentinel/pkg/actions"
-	"github.com/lucid-vigil/sentinel/pkg/errors"
-	"github.com/lucid-vigil/sentinel/pkg/events"
+	"github.com/lucid-vigil/pkg/actions"
+	"github.com/lucid-vigil/pkg/errors"
+	"github.com/lucid-vigil/pkg/events"
 	"github.com/rs/zerolog"
 )
 

@@ -31,9 +31,9 @@ import (
 	"github.com/google/gopacket"
 	"github.com/google/gopacket/layers"
 	"github.com/google/gopacket/pcap"
-	"github.com/lucid-vigil/sentinel/pkg/events"
-	"github.com/lucid-vigil/sentinel/pkg/monitors/base_monitor"
-	"github.com/lucid-vigil/sentinel/pkg/monitors/scheduler"
+	"github.com/lucid-vigil/pkg/events"
+	"github.com/lucid-vigil/pkg/monitors/base_monitor"
+	"github.com/lucid-vigil/pkg/monitors/scheduler"
 	"github.com/miekg/dns"
 	"github.com/rs/zerolog"
 	"github.com/shirou/gopsutil/v3/cpu"
@@ -2376,7 +2376,7 @@ func (sm *SentinelMonitor) setConfigDefaults() {
 		sm.config.ResponseMode = "monitor"
 	}
 	if sm.config.BaselineDir == "" {
-		sm.config.BaselineDir = "/var/lib/sentinel/certificates"
+		sm.config.BaselineDir = "/var/lib/lucid-vigil/certificates"
 	}
 	if sm.config.ExpiryThresholdDays == 0 {
 		sm.config.ExpiryThresholdDays = 30

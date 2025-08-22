@@ -23,9 +23,9 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/lucid-vigil/sentinel/pkg/events"
-	"github.com/lucid-vigil/sentinel/pkg/monitors/base_monitor"
-	"github.com/lucid-vigil/sentinel/pkg/monitors/scheduler"
+	"github.com/lucid-vigil/pkg/events"
+	"github.com/lucid-vigil/pkg/monitors/base_monitor"
+	"github.com/lucid-vigil/pkg/monitors/scheduler"
 	"github.com/rs/zerolog"
 	psnet "github.com/shirou/gopsutil/v3/net"
 )
@@ -1116,10 +1116,10 @@ func (sm *SentryMonitor) setConfigDefaults() {
 		sm.config.SuidCheckInterval = 300 // 5 minutes
 	}
 	if sm.config.SuidBaselineFile == "" {
-		sm.config.SuidBaselineFile = "/var/lib/sentinel/suid_baseline.txt"
+		sm.config.SuidBaselineFile = "/var/lib/lucid-vigil/suid_baseline.txt"
 	}
 	if sm.config.ConfigBaselineDir == "" {
-		sm.config.ConfigBaselineDir = "/var/lib/sentinel/config_baselines"
+		sm.config.ConfigBaselineDir = "/var/lib/lucid-vigil/config_baselines"
 	}
 }
 

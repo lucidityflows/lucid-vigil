@@ -18,9 +18,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/lucid-vigil/sentinel/pkg/events"
-	"github.com/lucid-vigil/sentinel/pkg/monitors/base_monitor"
-	"github.com/lucid-vigil/sentinel/pkg/monitors/scheduler"
+	"github.com/lucid-vigil/pkg/events"
+	"github.com/lucid-vigil/pkg/monitors/base_monitor"
+	"github.com/lucid-vigil/pkg/monitors/scheduler"
 	"github.com/rs/zerolog"
 	psutil "github.com/shirou/gopsutil/v3/process"
 )
@@ -1328,8 +1328,8 @@ func (dm *DetectorMonitor) parseConfig(config map[string]interface{}) error {
 	dm.config.BaselineUpdateInterval = "1h"
 	dm.config.AnomalyCheckInterval = "5m"
 	dm.config.MaxHistoryDays = 30
-	dm.config.BaselineStoragePath = "/var/lib/sentinel/baselines"
-	dm.config.FeatureStoragePath = "/var/lib/sentinel/features"
+	dm.config.BaselineStoragePath = "/var/lib/lucid-vigil/baselines"
+	dm.config.FeatureStoragePath = "/var/lib/lucid-vigil/features"
 	dm.config.EnableSequenceDetection = true
 	dm.config.EnableTimeSeriesAnalysis = true
 	dm.config.EnableCorrelationAnalysis = true

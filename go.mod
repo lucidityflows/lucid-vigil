@@ -1,4 +1,4 @@
-module github.com/lucid-vigil/sentinel
+module github.com/lucid-vigil
 
 go 1.24.4
 

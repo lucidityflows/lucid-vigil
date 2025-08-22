@@ -14,9 +14,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/lucid-vigil/sentinel/pkg/events"
-	"github.com/lucid-vigil/sentinel/pkg/monitors/base_monitor"
-	"github.com/lucid-vigil/sentinel/pkg/monitors/scheduler"
+	"github.com/lucid-vigil/pkg/events"
+	"github.com/lucid-vigil/pkg/monitors/base_monitor"
+	"github.com/lucid-vigil/pkg/monitors/scheduler"
 	"github.com/rs/zerolog"
 )
 
@@ -1368,7 +1368,7 @@ func (sm *ScribeMonitor) setConfigDefaults() {
 		sm.config.ReportFormats = []string{"json", "html"}
 	}
 	if sm.config.EvidenceStorage == "" {
-		sm.config.EvidenceStorage = "/var/lib/sentinel/evidence"
+		sm.config.EvidenceStorage = "/var/lib/lucid-vigil/evidence"
 	}
 	if sm.config.RetentionDays == 0 {
 		sm.config.RetentionDays = 365

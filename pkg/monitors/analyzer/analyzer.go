@@ -10,9 +10,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/lucid-vigil/sentinel/pkg/events"
-	"github.com/lucid-vigil/sentinel/pkg/monitors/base_monitor"
-	"github.com/lucid-vigil/sentinel/pkg/monitors/scheduler"
+	"github.com/lucid-vigil/pkg/events"
+	"github.com/lucid-vigil/pkg/monitors/base_monitor"
+	"github.com/lucid-vigil/pkg/monitors/scheduler"
 	"github.com/rs/zerolog"
 )
 
