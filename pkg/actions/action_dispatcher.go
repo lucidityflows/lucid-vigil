@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/lucid-vigil/sentinel/pkg/actions/block_ip"
-	"github.com/lucid-vigil/sentinel/pkg/actions/kill_process"
+	"github.com/lucid-vigil/pkg/actions/block_ip"
+	"github.com/lucid-vigil/pkg/actions/kill_process"
 	"github.com/rs/zerolog/log"
 )
 
